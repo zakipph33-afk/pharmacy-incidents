@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📋 Nouveau Rapport d'Incident</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Barre de navigation -->
+        <div class="navbar">
+            <div class="navbar-brand">🏥 Système de Déclaration d'Incidents</div>
+            <div class="navbar-user">
+                <span id="userName">Utilisateur</span>
+                <button class="btn btn-danger" id="logoutBtn" style="width: auto; padding: 8px 20px;">
+                    🚪 Déconnexion
+                </button>
+            </div>
+        </div>
+
+        <!-- Carte principale -->
+        <div class="card">
+            <h2>📋 Déclaration d'Incident lors de la Préparation de Chimiothérapie</h2>
+            
+            <!-- Messages d'alerte -->
+            <div id="alertMessage" class="alert hidden"></div>
+
+            <!-- Formulaire de rapport -->
+            <form id="incidentForm">
+                <!-- Service -->
+                <div class="form-group">
+                    <label class="form-label">🏥 Service</label>
+                    <select class="form-select" id="service" required>
+                        <option value="">Choisir le service</option>
+                        <option value="oncology">Oncologie</option>
+                        <option value="hematology">Hématologie</option>
+                        <option value="pediatric">Pédiatrie</option>
+                    </select>
+                </div>
+
+                <!-- Nom du médicament -->
+                <div class="form-group">
+                    <label class="form-label">💊 Nom du médicament</label>
+                    <input type="text" class="form-control" id="drugName" 
+                           placeholder="Ex: Cisplatin" required>
+                </div>
+
+                <!-- Numéro du médicament -->
+                <div class="form-group">
+                    <label class="form-label">🔢 Numéro de lot du médicament</label>
+                    <input type="text" class="form-control" id="drugNumber" 
+                           placeholder="Ex: 0803/25" required>
+                </div>
+
+                <!-- Upload d'image -->
+                <div class="form-group">
+                    <label class="form-label">📷 Photo de l'incident (optionnel)</label>
+                    <div class="image-upload" id="imageUploadArea">
+                        <input type="file" id="incidentImage" accept="image/*">
+                        <p>📁 Cliquez ici pour télécharger une image</p>
+                        <small style="color: #718096;">PNG, JPG, JPEG (max 5MB)</small>
+                    </div>
+                    <img id="imagePreview" class="image-preview" alt="Aperçu de l'image">
+                </div>
+
+                <!-- Heure de l'incident -->
+                <div class="form-group">
+                    <label class="form-label">🕐 Heure de l'incident</label>
+                    <input type="datetime-local" class="form-control" id="incidentTime" required>
+                </div>
+
+                <!-- Description de l'incident -->
+                <div class="form-group">
+                    <label class="form-label">📝 Description de l'incident (optionnel)</label>
+                    <textarea class="form-control" id="incidentDescription" 
+                              placeholder="Décrivez ce qui s'est passé en détail..." rows="4"></textarea>
+                </div>
+
+                <!-- Équipements de protection individuelle -->
+                <div class="form-group">
+                    <label class="form-label">🛡️ Équipements de Protection Individuelle (EPI)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gloves">
+                            <label for="gloves">🧤 Gants</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gown">
+                            <label for="gown">👔 Blouse</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cap">
+                            <label for="cap">🧢 Calot</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="apron">
+                            <label for="apron">👓 Lunettes </label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="shoeCovers">
+                            <label for="shoeCovers">😷 Masque </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Boutons -->
+                <button type="submit" class="btn btn-primary">
+                    📤 Envoyer le rapport
+                </button>
+                <button type="button" class="btn btn-secondary" id="viewReportsBtn">
+                    📊 Voir mes rapports précédents
+                </button>
+            </form>
+
+            <!-- Loading Spinner -->
+            <div class="spinner" id="loadingSpinner"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // ========================================
+        // إعدادات Supabase
+        // ========================================
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm'
+
+        // ⚠️⚠️⚠️ ضع معلوماتك هنا ⚠️⚠️⚠️
+        const SUPABASE_URL = 'https://tewlugshhfcgkujgovjb.supabase.co'
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRld2x1Z3NoaGZjZ2t1amdvdmpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNjU5NTAsImV4cCI6MjA4MDg0MTk1MH0.ECW1RQ1tJveR0vc3R297nvG-jvCwKqmkCUaFHUEK2hc'
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+        console.log('✅ صفحة التقرير تم تحميلها')
+
+        // ========================================
+        // التحقق من تسجيل الدخول
+        // ========================================
+        const user = JSON.parse(localStorage.getItem('user'))
+        if (!user) {
+            alert('❌ يجب تسجيل الدخول أولاً!')
+            window.location.href = 'index.html'
+        }
+
+        console.log('👤 المستخدم:', user)
+
+        // عرض اسم المستخدم
+        document.getElementById('userName').textContent = user.name
+
+        // ========================================
+        // العناصر
+        // ========================================
+        const alertMessage = document.getElementById('alertMessage')
+        const loadingSpinner = document.getElementById('loadingSpinner')
+        const imageUploadArea = document.getElementById('imageUploadArea')
+        const incidentImage = document.getElementById('incidentImage')
+        const imagePreview = document.getElementById('imagePreview')
+
+        // ========================================
+        // دوال مساعدة
+        // ========================================
+        function showAlert(message, type) {
+            console.log(`📢 ${type}: ${message}`)
+            alertMessage.textContent = message
+            alertMessage.className = `alert alert-${type}`
+            alertMessage.classList.remove('hidden')
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+            
+            setTimeout(() => {
+                alertMessage.classList.add('hidden')
+            }, 5000)
+        }
+
+        function toggleLoading(show) {
+            if (show) {
+                loadingSpinner.classList.add('show')
+            } else {
+                loadingSpinner.classList.remove('show')
+            }
+        }
+
+        // ========================================
+        // رفع الصورة
+        // ========================================
+        imageUploadArea.addEventListener('click', () => {
+            incidentImage.click()
+        })
+
+        incidentImage.addEventListener('change', (e) => {
+            const file = e.target.files[0]
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert('❌ L\'image est trop volumineuse. Maximum 5MB', 'danger')
+                    incidentImage.value = ''
+                    return
+                }
+                
+                const reader = new FileReader()
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result
+                    imagePreview.classList.add('show')
+                }
+                reader.readAsDataURL(file)
+            }
+        })
+
+        // ========================================
+        // إرسال التقرير
+        // ========================================
+        document.getElementById('incidentForm').addEventListener('submit', async (e) => {
+            e.preventDefault()
+            
+            console.log('🔵 بدء إرسال التقرير...')
+            
+            // جمع البيانات
+            const service = document.getElementById('service').value
+            const drugName = document.getElementById('drugName').value.trim()
+            const drugNumber = document.getElementById('drugNumber').value.trim()
+            const incidentTime = document.getElementById('incidentTime').value
+            const description = document.getElementById('incidentDescription').value.trim()
+            
+            // معدات الحماية
+            const gloves = document.getElementById('gloves').checked
+            const gown = document.getElementById('gown').checked
+            const cap = document.getElementById('cap').checked
+            const apron = document.getElementById('apron').checked
+            const shoeCovers = document.getElementById('shoeCovers').checked
+            
+            console.log('📝 البيانات:', {
+                service, drugName, drugNumber, incidentTime, description,
+                ppe: { gloves, gown, cap, apron, shoeCovers }
+            })
+            
+            toggleLoading(true)
+            
+            try {
+                let imageUrl = null
+                
+                // 1. رفع الصورة إذا كانت موجودة
+                if (incidentImage.files.length > 0) {
+                    console.log('📷 رفع الصورة...')
+                    const file = incidentImage.files[0]
+                    const fileName = `${Date.now()}_${file.name}`
+                    
+                    const { data: uploadData, error: uploadError } = await supabase.storage
+                        .from('incident-images')
+                        .upload(fileName, file)
+                    
+                    if (uploadError) {
+                        console.error('❌ خطأ في رفع الصورة:', uploadError)
+                        throw uploadError
+                    }
+                    
+                    console.log('✅ تم رفع الصورة:', uploadData)
+                    
+                    // الحصول على رابط الصورة
+                    const { data: urlData } = supabase.storage
+                        .from('incident-images')
+                        .getPublicUrl(fileName)
+                    
+                    imageUrl = urlData.publicUrl
+                    console.log('🔗 رابط الصورة:', imageUrl)
+                }
+                
+                // 2. حفظ التقرير في قاعدة البيانات
+                console.log('💾 حفظ التقرير في قاعدة البيانات...')
+                
+                const incidentData = {
+                    user_id: user.id,
+                    service: service,
+                    drug_name: drugName,
+                    drug_number: drugNumber,
+                    incident_image_url: imageUrl,
+                    incident_time: incidentTime,
+                    incident_description: description,
+                    wearing_gloves: gloves,
+                    wearing_gown: gown,
+                    wearing_cap: cap,
+                    wearing_apron: apron,
+                    wearing_shoe_covers: shoeCovers,
+                    status: 'pending'
+                }
+                
+                console.log('📦 البيانات المرسلة:', incidentData)
+                
+                const { data: insertData, error: insertError } = await supabase
+                    .from('incidents')
+                    .insert([incidentData])
+                    .select()
+                
+                if (insertError) {
+                    console.error('❌ خطأ في حفظ التقرير:', insertError)
+                    throw insertError
+                }
+                
+                console.log('✅ تم حفظ التقرير بنجاح!', insertData)
+                
+                toggleLoading(false)
+                showAlert('✅ Rapport envoyé avec succès! Redirection...', 'success')
+                
+                // مسح النموذج
+                document.getElementById('incidentForm').reset()
+                imagePreview.classList.remove('show')
+                
+                // التحويل لصفحة التأكيد
+                console.log('➡️ التحويل إلى confirmation.html...')
+                setTimeout(() => {
+                    window.location.href = 'confirmation.html'
+                }, 2000)
+                
+            } catch (error) {
+                toggleLoading(false)
+                console.error('❌❌❌ خطأ كبير:', error)
+                console.error('تفاصيل:', error.message)
+                showAlert('❌ Une erreur s\'est produite : ' + error.message, 'danger')
+            }
+        })
+
+        // ========================================
+        // الأزرار الأخرى
+        // ========================================
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            console.log('🚪 تسجيل خروج...')
+            await supabase.auth.signOut()
+            localStorage.removeItem('user')
+            window.location.href = 'index.html'
+        })
+
+        document.getElementById('viewReportsBtn').addEventListener('click', () => {
+            console.log('📊 الذهاب لصفحة التقارير...')
+            window.location.href = 'confirmation.html'
+        })
+
+        // ========================================
+        // تعيين الوقت الحالي
+        // ========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            const now = new Date()
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset())
+            document.getElementById('incidentTime').value = now.toISOString().slice(0, 16)
+            console.log('🕐 تم تعيين الوقت الحالي')
+        })
+    </script>
+    <!-- زر Dark Mode -->
+<button class="dark-mode-toggle" onclick="toggleDarkMode()" title="تبديل الوضع الداكن">
+    <span id="darkModeIcon">🌙</span>
+</button>
+
+<script>
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+        const html = document.documentElement
+        const icon = document.getElementById('darkModeIcon')
+        
+        if (html.getAttribute('data-theme') === 'dark') {
+            html.removeAttribute('data-theme')
+            icon.textContent = '🌙'
+            localStorage.setItem('theme', 'light')
+        } else {
+            html.setAttribute('data-theme', 'dark')
+            icon.textContent = '☀️'
+            localStorage.setItem('theme', 'dark')
+        }
+    }
+    
+    // تحميل الوضع المحفوظ
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme')
+        const icon = document.getElementById('darkModeIcon')
+        
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark')
+            if (icon) icon.textContent = '☀️'
+        }
+    })
+</script>
+</body>
+</html>

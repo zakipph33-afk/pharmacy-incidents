@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏥 Système de Déclaration d'Incidents - Connexion</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card" style="max-width: 500px; margin: 50px auto;">
+            <h1 style="animation: pulse 2s ease-in-out infinite;">🏥 Système de Déclaration des Incidents de Chimiothérapie</h1>
+<p style="text-align: center; margin-bottom: 30px; font-size: 16px;">
+    <span style="color: #718096;">Préparateur en Pharmacie Hospitalière</span>
+    <span style="color: #718096; margin: 0 8px;">@by</span>
+    <span style="color: #ffd700; font-weight: 700; font-size: 18px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);">ZAKI</span>
+</p>
+
+<style>
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.05);
+            opacity: 0.9;
+        }
+    }
+</style>
+
+            <!-- Messages d'alerte -->
+            <div id="alertMessage" class="alert hidden"></div>
+
+            <!-- Formulaire de connexion -->
+            <div id="loginForm">
+                <h4>Connexion</h4>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="loginEmail" 
+                               placeholder="exemple@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="loginPassword" 
+                               placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        🔐 Se connecter
+                    </button>
+                </form>
+                <p class="text-center mt-3">
+                    Vous n'avez pas de compte ? 
+                    <a href="#" id="showSignup">Créer un compte</a>
+                </p>
+            </div>
+
+            <!-- Formulaire d'inscription -->
+            <div id="signupForm" class="hidden">
+                <h4>Créer un compte</h4>
+                <form id="signupFormElement">
+                    <div class="form-group">
+                        <label class="form-label">Nom complet</label>
+                        <input type="text" class="form-control" id="signupName" 
+                               placeholder="BENNADER Zakarya" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="signupEmail" 
+                               placeholder="exemple@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="signupPassword" 
+                               placeholder="••••••••" minlength="6" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Service</label>
+                        <select class="form-select" id="signupDepartment" required>
+                            <option value="">Choisir le service</option>
+                            <option value="oncology">Oncologie</option>
+                            <option value="hematology">Hématologie</option>
+                            <option value="pediatric">Pédiatrie</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        ✅ Créer un compte
+                    </button>
+                </form>
+                <p class="text-center mt-3">
+                    Vous avez déjà un compte ? 
+                    <a href="#" id="showLogin">Se connecter</a>
+                </p>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="spinner" id="loadingSpinner"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 15px 20px; text-align: center; box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1); z-index: 1000; animation: slideUpFooter 0.8s ease;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div style="color: #718096; font-size: 14px;">
+                © 2025 <strong style="color: #667eea; font-weight: 700;">Zaki</strong> - Tous droits réservés
+            </div>
+            <div style="color: #718096; font-size: 13px; font-style: italic;">
+                💊 Système PPH
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <span style="color: #718096; font-size: 13px;">Développé avec</span>
+                <span style="color: #f56565; font-size: 18px; animation: heartbeat 1.5s ease-in-out infinite;">❤️</span>
+                <span style="color: #718096; font-size: 13px;">par <strong style="color: #667eea;">Zaki</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        @keyframes slideUpFooter {
+            from {
+                opacity: 0;
+                transform: translateY(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% {
+                transform: scale(1);
+            }
+            10%, 30% {
+                transform: scale(1.2);
+            }
+            20%, 40% {
+                transform: scale(1);
+            }
+        }
+        
+        body {
+            padding-bottom: 80px;
+        }
+        
+        @media (max-width: 768px) {
+            [style*="display: flex"][style*="justify-content: space-between"] {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px !important;
+            }
+            body {
+                padding-bottom: 120px;
+            }
+        }
+    </style>
+
+    <!-- زر Dark Mode -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="تبديل الوضع الداكن">
+        <span id="darkModeIcon">🌙</span>
+    </button>
+
+    <script type="module">
+        // ========================================
+        // إعدادات Supabase
+        // ========================================
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm'
+
+        // ⚠️⚠️⚠️ ضع معلوماتك هنا ⚠️⚠️⚠️
+        const SUPABASE_URL = 'https://tewlugshhfcgkujgovjb.supabase.co'
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRld2x1Z3NoaGZjZ2t1amdvdmpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNjU5NTAsImV4cCI6MjA4MDg0MTk1MH0.ECW1RQ1tJveR0vc3R297nvG-jvCwKqmkCUaFHUEK2hc'
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+        console.log('✅ تم تحميل JavaScript بنجاح!')
+
+        // ========================================
+        // العناصر
+        // ========================================
+        const loginForm = document.getElementById('loginForm')
+        const signupForm = document.getElementById('signupForm')
+        const showSignupBtn = document.getElementById('showSignup')
+        const showLoginBtn = document.getElementById('showLogin')
+        const alertMessage = document.getElementById('alertMessage')
+        const loadingSpinner = document.getElementById('loadingSpinner')
+
+        // ========================================
+        // دوال مساعدة
+        // ========================================
+        function showAlert(message, type) {
+            alertMessage.textContent = message
+            alertMessage.className = 'alert alert-' + type
+            alertMessage.classList.remove('hidden')
+            
+            setTimeout(() => {
+                alertMessage.classList.add('hidden')
+            }, 5000)
+        }
+
+        function toggleLoading(show) {
+            if (show) {
+                loadingSpinner.classList.add('show')
+            } else {
+                loadingSpinner.classList.remove('show')
+            }
+        }
+
+        // ========================================
+        // التبديل بين Login و Signup
+        // ========================================
+        showSignupBtn.addEventListener('click', (e) => {
+            console.log('🔵 Affichage du formulaire d\'inscription')
+            e.preventDefault()
+            loginForm.classList.add('hidden')
+            signupForm.classList.remove('hidden')
+        })
+
+        showLoginBtn.addEventListener('click', (e) => {
+            console.log('🔵 Affichage du formulaire de connexion')
+            e.preventDefault()
+            signupForm.classList.add('hidden')
+            loginForm.classList.remove('hidden')
+        })
+
+        // ========================================
+        // Créer un nouveau compte
+        // ========================================
+        document.getElementById('signupFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault()
+            
+            const name = document.getElementById('signupName').value.trim()
+            const email = document.getElementById('signupEmail').value.trim()
+            const password = document.getElementById('signupPassword').value
+            const department = document.getElementById('signupDepartment').value
+            
+            if (!name || !email || !password || !department) {
+                showAlert('❌ Veuillez remplir tous les champs', 'danger')
+                return
+            }
+            
+            if (password.length < 6) {
+                showAlert('❌ Le mot de passe doit contenir au moins 6 caractères', 'danger')
+                return
+            }
+            
+            toggleLoading(true)
+            
+            try {
+                const { data: authData, error: authError } = await supabase.auth.signUp({
+                    email: email,
+                    password: password
+                })
+                
+                if (authError) throw authError
+                
+                const { error: dbError } = await supabase
+                    .from('users')
+                    .insert([{
+                        id: authData.user.id,
+                        email: email,
+                        full_name: name,
+                        department: department,
+                        role: 'user'
+                    }])
+                
+                if (dbError) throw dbError
+                
+                toggleLoading(false)
+                showAlert('✅ Compte créé avec succès! Redirection en cours...', 'success')
+                
+                localStorage.setItem('user', JSON.stringify({
+                    id: authData.user.id,
+                    email: email,
+                    name: name,
+                    department: department
+                }))
+                
+                setTimeout(() => {
+                    window.location.href = 'report.html'
+                }, 2000)
+                
+            } catch (error) {
+                toggleLoading(false)
+                console.error('❌ Erreur:', error)
+                
+                if (error.message.includes('already registered')) {
+                    showAlert('❌ Cet email est déjà enregistré', 'danger')
+                } else {
+                    showAlert('❌ Une erreur s\'est produite : ' + error.message, 'danger')
+                }
+            }
+        })
+
+        // ========================================
+        // Connexion
+        // ========================================
+        document.getElementById('loginFormElement').addEventListener('submit', async (e) => {
+            e.preventDefault()
+            
+            const email = document.getElementById('loginEmail').value.trim()
+            const password = document.getElementById('loginPassword').value
+            
+            if (!email || !password) {
+                showAlert('❌ Veuillez remplir tous les champs', 'danger')
+                return
+            }
+            
+            toggleLoading(true)
+            
+            try {
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                })
+                
+                if (authError) throw authError
+                
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', authData.user.id)
+                    .single()
+                
+                if (userError) throw userError
+                
+                toggleLoading(false)
+                showAlert('✅ Connexion réussie !', 'success')
+                
+                localStorage.setItem('user', JSON.stringify({
+                    id: userData.id,
+                    email: userData.email,
+                    name: userData.full_name,
+                    department: userData.department,
+                    role: userData.role
+                }))
+                
+                setTimeout(() => {
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin.html'
+                    } else {
+                        window.location.href = 'report.html'
+                    }
+                }, 1500)
+                
+            } catch (error) {
+                toggleLoading(false)
+                console.error('❌ Erreur:', error)
+                
+                if (error.message.includes('Invalid login credentials')) {
+                    showAlert('❌ Email ou mot de passe incorrect', 'danger')
+                } else {
+                    showAlert('❌ Une erreur s\'est produite : ' + error.message, 'danger')
+                }
+            }
+        })
+    </script>
+
+    <script>
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const html = document.documentElement
+            const icon = document.getElementById('darkModeIcon')
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme')
+                icon.textContent = '🌙'
+                localStorage.setItem('theme', 'light')
+            } else {
+                html.setAttribute('data-theme', 'dark')
+                icon.textContent = '☀️'
+                localStorage.setItem('theme', 'dark')
+            }
+        }
+        
+        // تحميل الوضع المحفوظ
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme')
+            const icon = document.getElementById('darkModeIcon')
+            
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark')
+                if (icon) icon.textContent = '☀️'
+            }
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Mes Rapports</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Barre de navigation -->
+        <div class="navbar">
+            <div class="navbar-brand">🏥 Système de Déclaration d'Incidents</div>
+            <div class="navbar-user">
+                <span id="userName">Utilisateur</span>
+                <button class="btn btn-primary" id="newReportBtn" style="width: auto; padding: 8px 20px; margin-left: 10px;">
+                    ➕ Nouveau rapport
+                </button>
+                <button class="btn btn-danger" id="logoutBtn" style="width: auto; padding: 8px 20px;">
+                    🚪 Déconnexion
+                </button>
+            </div>
+        </div>
+
+        <!-- Carte principale -->
+        <div class="card">
+            <h2>📊 Mes Rapports Précédents</h2>
+            
+            <!-- Messages d'alerte -->
+            <div id="alertMessage" class="alert hidden"></div>
+
+            <!-- Loading Spinner -->
+            <div class="spinner show" id="loadingSpinner"></div>
+
+            <!-- Tableau des rapports -->
+            <div id="reportsContainer" class="hidden">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>📅 Date</th>
+                                <th>🏥 Service</th>
+                                <th>💊 Médicament</th>
+                                <th>🔢 Numéro</th>
+                                <th>📝 Description</th>
+                                <th>🛡️ EPI</th>
+                                <th>📷 Photo</th>
+                                <th>📊 Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                            <!-- Sera rempli automatiquement -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Message d'absence de rapports -->
+            <div id="noReportsMessage" class="hidden" style="text-align: center; padding: 40px;">
+                <h3 style="color: #718096;">📋 Aucun rapport pour le moment</h3>
+                <p style="color: #a0aec0; margin-top: 10px;">Commencez par créer votre premier rapport</p>
+                <button class="btn btn-primary" onclick="window.location.href='report.html'" style="margin-top: 20px; width: auto; padding: 12px 30px;">
+                    ➕ Créer un nouveau rapport
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour afficher les détails du rapport -->
+    <div id="detailsModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="card" style="max-width: 600px; margin: 20px; max-height: 90vh; overflow-y: auto;">
+            <h3>📋 Détails du Rapport</h3>
+            <div id="modalContent"></div>
+            <button class="btn btn-secondary" onclick="document.getElementById('detailsModal').style.display='none'">
+                Fermer
+            </button>
+        </div>
+    </div>
+
+    <script type="module">
+        // ========================================
+        // إعدادات Supabase
+        // ========================================
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.0/+esm'
+
+        // ⚠️⚠️⚠️ ضع معلوماتك هنا ⚠️⚠️⚠️
+        const SUPABASE_URL = 'https://tewlugshhfcgkujgovjb.supabase.co'
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRld2x1Z3NoaGZjZ2t1amdvdmpiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjUyNjU5NTAsImV4cCI6MjA4MDg0MTk1MH0.ECW1RQ1tJveR0vc3R297nvG-jvCwKqmkCUaFHUEK2hc'
+        
+        const supabase = createClient(SUPABASE_URL, SUPABASE_KEY)
+
+        console.log('✅ صفحة التقارير تم تحميلها')
+
+        // ========================================
+        // التحقق من تسجيل الدخول
+        // ========================================
+        const user = JSON.parse(localStorage.getItem('user'))
+        if (!user) {
+            alert('❌ يجب تسجيل الدخول أولاً!')
+            window.location.href = 'index.html'
+        }
+
+        console.log('👤 المستخدم:', user)
+
+        // عرض اسم المستخدم
+        document.getElementById('userName').textContent = user.name
+
+        // ========================================
+        // العناصر
+        // ========================================
+        const loadingSpinner = document.getElementById('loadingSpinner')
+        const reportsContainer = document.getElementById('reportsContainer')
+        const noReportsMessage = document.getElementById('noReportsMessage')
+        const reportsTableBody = document.getElementById('reportsTableBody')
+        const alertMessage = document.getElementById('alertMessage')
+
+        // ========================================
+        // دوال مساعدة
+        // ========================================
+        function showAlert(message, type) {
+            alertMessage.textContent = message
+            alertMessage.className = `alert alert-${type}`
+            alertMessage.classList.remove('hidden')
+            setTimeout(() => alertMessage.classList.add('hidden'), 5000)
+        }
+
+        function getServiceNameFr(service) {
+            const names = {
+                'oncology': 'Oncologie',
+                'hematology': 'Hématologie',
+                'pediatric': 'Pédiatrie'
+            }
+            return names[service] || service
+        }
+
+        function getStatusText(status) {
+            const statuses = {
+                'pending': { text: 'En attente', class: 'status-pending' },
+                'reviewed': { text: 'Examiné', class: 'status-reviewed' },
+                'resolved': { text: 'Résolu', class: 'status-resolved' }
+            }
+            return statuses[status] || { text: status, class: 'status-pending' }
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString)
+            return date.toLocaleDateString('fr-FR', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })
+        }
+
+        function getPPEList(incident) {
+            const ppe = []
+            if (incident.wearing_gloves) ppe.push('🧤 Gants')
+            if (incident.wearing_gown) ppe.push('👔 Blouse')
+            if (incident.wearing_cap) ppe.push('🧢 Calot')
+            if (incident.wearing_apron) ppe.push('🦺 Tablier')
+            if (incident.wearing_shoe_covers) ppe.push('👟 Surchaussures')
+            return ppe.length > 0 ? ppe.join('<br>') : '❌ Aucun'
+        }
+
+        // ========================================
+        // جلب التقارير
+        // ========================================
+        async function loadReports() {
+            try {
+                console.log('🔵 جلب التقارير من قاعدة البيانات...')
+                
+                const { data, error } = await supabase
+                    .from('incidents')
+                    .select('*')
+                    .eq('user_id', user.id)
+                    .order('created_at', { ascending: false })
+
+                console.log('📊 النتيجة:', { data, error })
+
+                if (error) {
+                    console.error('❌ خطأ في جلب التقارير:', error)
+                    throw error
+                }
+
+                loadingSpinner.classList.remove('show')
+
+                if (!data || data.length === 0) {
+                    console.log('📋 لا توجد تقارير')
+                    noReportsMessage.classList.remove('hidden')
+                    return
+                }
+
+                console.log(`✅ تم العثور على ${data.length} تقرير`)
+                reportsContainer.classList.remove('hidden')
+                
+                // ملء الجدول
+                reportsTableBody.innerHTML = data.map(incident => `
+                    <tr onclick="showDetails('${incident.id}')" style="cursor: pointer;">
+                        <td>${formatDate(incident.incident_time)}</td>
+                        <td>${getServiceNameFr(incident.service)}</td>
+                        <td>${incident.drug_name}</td>
+                        <td>${incident.drug_number}</td>
+                        <td>${incident.incident_description ? (incident.incident_description.substring(0, 30) + '...') : 'Aucune'}</td>
+                        <td style="font-size: 12px;">${getPPEList(incident)}</td>
+                        <td>${incident.incident_image_url ? '✅ Oui' : '❌ Non'}</td>
+                        <td><span class="status-badge ${getStatusText(incident.status).class}">${getStatusText(incident.status).text}</span></td>
+                    </tr>
+                `).join('')
+
+                // حفظ البيانات للتفاصيل
+                window.incidentsData = data
+
+            } catch (error) {
+                loadingSpinner.classList.remove('show')
+                console.error('❌❌❌ خطأ كبير:', error)
+                showAlert('❌ Une erreur s\'est produite lors du chargement des rapports: ' + error.message, 'danger')
+                
+                // عرض رسالة "لا توجد تقارير" في حالة الخطأ
+                noReportsMessage.classList.remove('hidden')
+            }
+        }
+
+        // ========================================
+        // عرض تفاصيل التقرير
+        // ========================================
+        window.showDetails = function(id) {
+            console.log('🔍 عرض تفاصيل التقرير:', id)
+            const incident = window.incidentsData.find(i => i.id === id)
+            if (!incident) return
+
+            const modal = document.getElementById('detailsModal')
+            const content = document.getElementById('modalContent')
+
+            content.innerHTML = `
+                <div style="line-height: 2;">
+                    <p><strong>🏥 Service:</strong> ${getServiceNameFr(incident.service)}</p>
+                    <p><strong>💊 Nom du médicament:</strong> ${incident.drug_name}</p>
+                    <p><strong>🔢 Numéro du médicament:</strong> ${incident.drug_number}</p>
+                    <p><strong>📅 Heure de l'incident:</strong> ${formatDate(incident.incident_time)}</p>
+                    <p><strong>📝 Description:</strong> ${incident.incident_description || 'Aucune'}</p>
+                    <p><strong>🛡️ Équipements de protection:</strong><br>${getPPEList(incident)}</p>
+                    <p><strong>📊 Statut:</strong> <span class="status-badge ${getStatusText(incident.status).class}">${getStatusText(incident.status).text}</span></p>
+                    ${incident.incident_image_url ? `<p><strong>📷 Photo:</strong><br><img src="${incident.incident_image_url}" style="max-width: 100%; border-radius: 10px; margin-top: 10px;"></p>` : ''}
+                </div>
+            `
+
+            modal.style.display = 'flex'
+        }
+
+        // ========================================
+        // إغلاق Modal
+        // ========================================
+        document.getElementById('detailsModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailsModal') {
+                e.target.style.display = 'none'
+            }
+        })
+
+        // ========================================
+        // الأزرار
+        // ========================================
+        document.getElementById('newReportBtn').addEventListener('click', () => {
+            window.location.href = 'report.html'
+        })
+
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            console.log('🚪 تسجيل خروج...')
+            await supabase.auth.signOut()
+            localStorage.removeItem('user')
+            window.location.href = 'index.html'
+        })
+
+        // ========================================
+        // تحميل التقارير عند فتح الصفحة
+        // ========================================
+        loadReports()
+    </script>
+    <!-- زر Dark Mode -->
+<button class="dark-mode-toggle" onclick="toggleDarkMode()" title="تبديل الوضع الداكن">
+    <span id="darkModeIcon">🌙</span>
+</button>
+
+<script>
+    // Dark Mode Toggle
+    function toggleDarkMode() {
+        const html = document.documentElement
+        const icon = document.getElementById('darkModeIcon')
+        
+        if (html.getAttribute('data-theme') === 'dark') {
+            html.removeAttribute('data-theme')
+            icon.textContent = '🌙'
+            localStorage.setItem('theme', 'light')
+        } else {
+            html.setAttribute('data-theme', 'dark')
+            icon.textContent = '☀️'
+            localStorage.setItem('theme', 'dark')
+        }
+    }
+    
+    // تحميل الوضع المحفوظ
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedTheme = localStorage.getItem('theme')
+        const icon = document.getElementById('darkModeIcon')
+        
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark')
+            if (icon) icon.textContent = '☀️'
+        }
+    })
+</script>
+</body>
+</html>
