@@ -5,8 +5,65 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🏥 Système de Déclaration d'Incidents - Connexion</title>
     <link rel="stylesheet" href="css/style.css">
+    <!-- PWA Meta Tags -->
+<meta name="theme-color" content="#667eea">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Incidents PPH">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/images/icon-192x192.png">
 </head>
 <body>
+    <!-- زر تثبيت التطبيق -->
+<div id="installBanner" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 15px 30px; border-radius: 50px; box-shadow: 0 8px 25px rgba(0,0,0,0.3); z-index: 10000; animation: slideDown 0.5s ease;">
+    <div style="display: flex; align-items: center; gap: 15px;">
+        <span style="font-size: 24px;">📱</span>
+        <div>
+            <strong>Installer l'application</strong>
+            <p style="margin: 5px 0 0 0; font-size: 13px; opacity: 0.9;">Accédez rapidement depuis votre écran d'accueil</p>
+        </div>
+        <button id="installBtn" style="background: white; color: #667eea; border: none; padding: 10px 20px; border-radius: 25px; font-weight: 600; cursor: pointer; margin-left: 10px;">
+            Installer
+        </button>
+        <button id="dismissBtn" style="background: transparent; color: white; border: 2px solid white; padding: 10px 20px; border-radius: 25px; font-weight: 600; cursor: pointer;">
+            Plus tard
+        </button>
+    </div>
+</div>
+
+<script>
+let deferredPrompt;
+const installBanner = document.getElementById('installBanner');
+const installBtn = document.getElementById('installBtn');
+const dismissBtn = document.getElementById('dismissBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBanner.style.display = 'block';
+});
+
+installBtn.addEventListener('click', async () => {
+    if (!deferredPrompt) return;
+    
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    
+    console.log(`User response: ${outcome}`);
+    deferredPrompt = null;
+    installBanner.style.display = 'none';
+});
+
+dismissBtn.addEventListener('click', () => {
+    installBanner.style.display = 'none';
+});
+
+window.addEventListener('appinstalled', () => {
+    console.log('✅ PWA installed successfully!');
+    installBanner.style.display = 'none';
+});
+</script>
     <div class="container">
         <div class="card" style="max-width: 500px; margin: 50px auto;">
             <h1 style="animation: pulse 2s ease-in-out infinite;">🏥 Système de Déclaration des Incidents de Chimiothérapie</h1>
@@ -383,6 +440,20 @@
                 if (icon) icon.textContent = '☀️'
             }
         })
+    </script>
+    <!-- تسجيل Service Worker -->
+<script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js')
+          .then(registration => {
+            console.log('✅ Service Worker registered successfully:', registration.scope);
+          })
+          .catch(error => {
+            console.log('❌ Service Worker registration failed:', error);
+          });
+      });
+    }
     </script>
 </body>
 </html>
