@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Politique de Confidentialité - Système de Déclaration des Incidents PPH</title>
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <link rel="apple-touch-icon" href="/images/icon-192-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/icon-192-192.png">
+    
+    <link rel="stylesheet" href="css/style.css">
+    
+    <style>
+        .privacy-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .privacy-section {
+            margin-bottom: 40px;
+        }
+        
+        .privacy-section h2 {
+            color: var(--primary-color);
+            font-size: 24px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        .privacy-section p, 
+        .privacy-section ul {
+            color: var(--text-dark);
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        .privacy-section ul {
+            padding-left: 30px;
+        }
+        
+        .privacy-section li {
+            margin-bottom: 10px;
+        }
+        
+        .last-updated {
+            background: var(--bg-light);
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            color: var(--text-gray);
+        }
+        
+        .contact-box {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        
+        .contact-box h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+        
+        .contact-box a {
+            color: white;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="privacy-container">
+            <div class="card">
+                <h1>🔒 Politique de Confidentialité</h1>
+                
+                <div class="last-updated">
+                    📅 <strong>Dernière mise à jour:</strong> 2 Février 2025
+                </div>
+                
+                <p style="font-size: 18px; color: var(--text-gray); margin-bottom: 40px;">
+                    Cette politique de confidentialité explique comment nous collectons, utilisons et protégeons vos données personnelles dans l'application "Système de Déclaration des Incidents de Chimiothérapie".
+                </p>
+
+                <!-- Section 1 -->
+                <div class="privacy-section">
+                    <h2>1. 📊 Collecte des Données</h2>
+                    <p>Notre application collecte les informations suivantes:</p>
+                    <ul>
+                        <li><strong>Informations d'identification:</strong> Nom complet, adresse email, service hospitalier</li>
+                        <li><strong>Données des incidents:</strong> Détails des incidents de chimiothérapie (médicament, dosage, laboratoire, date, description)</li>
+                        <li><strong>Photos:</strong> Images des incidents (facultatif, uniquement si vous choisissez de les télécharger)</li>
+                        <li><strong>Équipements de protection:</strong> Informations sur les EPI portés lors de l'incident</li>
+                        <li><strong>Données de connexion:</strong> Adresse IP, type de navigateur, système d'exploitation (collectées automatiquement)</li>
+                    </ul>
+                </div>
+
+                <!-- Section 2 -->
+                <div class="privacy-section">
+                    <h2>2. 🎯 Utilisation des Données</h2>
+                    <p>Les données collectées sont utilisées exclusivement pour les finalités suivantes:</p>
+                    <ul>
+                        <li><strong>Gestion des déclarations:</strong> Enregistrer et suivre les incidents de chimiothérapie</li>
+                        <li><strong>Amélioration de la sécurité:</strong> Analyser les incidents pour améliorer les protocoles de sécurité</li>
+                        <li><strong>Génération de statistiques:</strong> Créer des rapports anonymes pour identifier les tendances</li>
+                        <li><strong>Communication:</strong> Vous contacter concernant vos déclarations (si nécessaire)</li>
+                        <li><strong>Authentification:</strong> Vérifier votre identité lors de la connexion</li>
+                    </ul>
+                </div>
+
+                <!-- Section 3 -->
+                <div class="privacy-section">
+                    <h2>3. 🔐 Partage des Données</h2>
+                    <p><strong>Nous ne partageons JAMAIS vos données personnelles avec des tiers.</strong></p>
+                    <p>Seules les personnes suivantes ont accès à vos données:</p>
+                    <ul>
+                        <li><strong>Vous-même:</strong> Accès complet à vos propres déclarations</li>
+                        <li><strong>Administrateurs autorisés:</strong> Personnel administratif de votre établissement (pour la gestion des incidents)</li>
+                        <li><strong>Service d'hébergement:</strong> Supabase (infrastructure cloud sécurisée conforme RGPD)</li>
+                    </ul>
+                    <p>Aucune donnée n'est vendue, louée ou partagée à des fins commerciales.</p>
+                </div>
+
+                <!-- Section 4 -->
+                <div class="privacy-section">
+                    <h2>4. 🛡️ Sécurité des Données</h2>
+                    <p>Nous mettons en œuvre des mesures de sécurité strictes pour protéger vos données:</p>
+                    <ul>
+                        <li><strong>Chiffrement HTTPS:</strong> Toutes les communications sont chiffrées via SSL/TLS</li>
+                        <li><strong>Authentification sécurisée:</strong> Mots de passe hashés et stockés de manière sécurisée</li>
+                        <li><strong>Hébergement sécurisé:</strong> Données stockées sur des serveurs Supabase (certifié ISO 27001)</li>
+                        <li><strong>Accès restreint:</strong> Seuls les utilisateurs autorisés peuvent accéder aux données</li>
+                        <li><strong>Sauvegardes régulières:</strong> Copies de sécurité quotidiennes</li>
+                    </ul>
+                </div>
+
+                <!-- Section 5 -->
+                <div class="privacy-section">
+                    <h2>5. ⏱️ Conservation des Données</h2>
+                    <p>Nous conservons vos données pour les durées suivantes:</p>
+                    <ul>
+                        <li><strong>Données de compte:</strong> Tant que votre compte est actif</li>
+                        <li><strong>Déclarations d'incidents:</strong> 5 ans minimum (conformément aux réglementations pharmaceutiques)</li>
+                        <li><strong>Photos d'incidents:</strong> Même durée que les déclarations associées</li>
+                    </ul>
+                    <p>Après suppression de votre compte, vos données personnelles sont anonymisées mais les rapports d'incidents sont conservés pour des raisons de conformité réglementaire.</p>
+                </div>
+
+                <!-- Section 6 -->
+                <div class="privacy-section">
+                    <h2>6. ✅ Vos Droits</h2>
+                    <p>Conformément au RGPD, vous disposez des droits suivants:</p>
+                    <ul>
+                        <li><strong>Droit d'accès:</strong> Consulter toutes vos données personnelles</li>
+                        <li><strong>Droit de rectification:</strong> Modifier vos informations inexactes</li>
+                        <li><strong>Droit à l'effacement:</strong> Demander la suppression de vos données (sous certaines conditions)</li>
+                        <li><strong>Droit à la portabilité:</strong> Récupérer vos données dans un format structuré</li>
+                        <li><strong>Droit d'opposition:</strong> Vous opposer au traitement de vos données</li>
+                        <li><strong>Droit de limitation:</strong> Demander la limitation du traitement</li>
+                    </ul>
+                    <p>Pour exercer vos droits, contactez-nous à l'adresse indiquée ci-dessous.</p>
+                </div>
+
+                <!-- Section 7 -->
+                <div class="privacy-section">
+                    <h2>7. 🍪 Cookies et Technologies Similaires</h2>
+                    <p>Notre application utilise les technologies suivantes:</p>
+                    <ul>
+                        <li><strong>Cookies de session:</strong> Pour maintenir votre connexion active</li>
+                        <li><strong>Local Storage:</strong> Pour stocker vos préférences (thème sombre, langue)</li>
+                        <li><strong>Service Worker:</strong> Pour permettre le fonctionnement hors ligne</li>
+                    </ul>
+                    <p>Aucun cookie de tracking ou publicitaire n'est utilisé.</p>
+                </div>
+
+                <!-- Section 8 -->
+                <div class="privacy-section">
+                    <h2>8. 👶 Protection des Mineurs</h2>
+                    <p>Cette application est destinée aux professionnels de santé majeurs. Nous ne collectons pas sciemment de données personnelles de personnes de moins de 18 ans.</p>
+                </div>
+
+                <!-- Section 9 -->
+                <div class="privacy-section">
+                    <h2>9. 🌍 Transferts Internationaux</h2>
+                    <p>Vos données sont hébergées sur des serveurs situés dans l'Union Européenne (conformément au RGPD). En cas de transfert hors UE, nous nous assurons que des garanties appropriées sont en place.</p>
+                </div>
+
+                <!-- Section 10 -->
+                <div class="privacy-section">
+                    <h2>10. 🔄 Modifications de cette Politique</h2>
+                    <p>Nous pouvons mettre à jour cette politique de confidentialité. En cas de changement important, vous serez informé par:</p>
+                    <ul>
+                        <li>Une notification dans l'application</li>
+                        <li>Un email à votre adresse enregistrée</li>
+                    </ul>
+                    <p>La date de dernière mise à jour est indiquée en haut de ce document.</p>
+                </div>
+
+                <!-- Contact Box -->
+                <div class="contact-box">
+                    <h3>📧 Nous Contacter</h3>
+                    <p>Pour toute question concernant cette politique de confidentialité ou pour exercer vos droits:</p>
+                    <p style="margin-top: 15px;">
+                        <strong>Email:</strong> <a href="zakipph33@gmail.com">zakipph33@gmail.com.com</a><br>
+                        <strong>Responsable:</strong> Zaki - Développeur de l'application
+                    </p>
+                    <p style="font-size: 14px; margin-top: 20px; opacity: 0.9;">
+                        Nous nous engageons à répondre à toutes vos demandes dans un délai de 30 jours.
+                    </p>
+                </div>
+
+                <!-- Back Button -->
+                <div style="text-align: center;">
+                    <a href="index.html" class="back-btn">⬅️ Retour à l'accueil</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 12px 20px; text-align: center; box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1); z-index: 999;">
+        <p style="margin: 0; color: #718096; font-size: 13px;">
+            © 2025 Tous droits réservés - Développé par <strong style="color: #667eea;">Zaki</strong>
+        </p>
+    </div>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Mode sombre">
+        <span id="darkModeIcon">🌙</span>
+    </button>
+
+    <!-- Dark Mode Script -->
+    <script>
+        function toggleDarkMode() {
+            const html = document.documentElement
+            const icon = document.getElementById('darkModeIcon')
+            
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme')
+                icon.textContent = '🌙'
+                localStorage.setItem('theme', 'light')
+            } else {
+                html.setAttribute('data-theme', 'dark')
+                icon.textContent = '☀️'
+                localStorage.setItem('theme', 'dark')
+            }
+        }
+        
+        // Load saved theme
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme')
+            const icon = document.getElementById('darkModeIcon')
+            
+            if (savedTheme === 'dark') {
+                document.documentElement.setAttribute('data-theme', 'dark')
+                if (icon) icon.textContent = '☀️'
+            }
+        })
+    </script>
+</body>
+</html>
